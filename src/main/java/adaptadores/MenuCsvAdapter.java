@@ -4,9 +4,7 @@ import java.nio.file.Path;
 import java.util.List;
 import modelo.Plato;
 
-/** Lee menu_admin.csv: separado por coma, con precio de punto decimal. */
 public class MenuCsvAdapter extends FuenteDatos<Plato> {
-
     public MenuCsvAdapter(Path ruta) {
         super(ruta);
     }
@@ -14,7 +12,7 @@ public class MenuCsvAdapter extends FuenteDatos<Plato> {
     @Override
     protected List<Plato> convertir(String contenido) {
         return contenido.lines()
-                .skip(1)                          // cabecera
+                .skip(1)                       
                 .filter(l -> !l.isBlank())
                 .map(l -> l.split(",", -1))
                 .map(c -> new Plato(

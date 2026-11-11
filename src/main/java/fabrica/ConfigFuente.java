@@ -10,10 +10,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-/** Una entrada de config/fuentes.json: qué tipo de fuente es y dónde está su archivo. */
 public record ConfigFuente(String tipo, String ruta) {
-
-    /** Lee config/fuentes.json y devuelve la lista de fuentes configuradas. */
     public static List<ConfigFuente> cargar(Path archivoConfig) {
         try {
             String texto = Files.readString(archivoConfig);

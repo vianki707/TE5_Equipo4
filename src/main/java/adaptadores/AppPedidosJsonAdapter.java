@@ -11,9 +11,7 @@ import java.util.List;
 import modelo.CambioEstado;
 import modelo.LineaPedido;
 
-/** Lee pedidos_app.json: un objeto por pedido, que se convierte en una LineaPedido por plato. */
 public class AppPedidosJsonAdapter extends FuenteDatos<LineaPedido> {
-
     public AppPedidosJsonAdapter(Path ruta) {
         super(ruta);
     }
@@ -28,8 +26,6 @@ public class AppPedidosJsonAdapter extends FuenteDatos<LineaPedido> {
             String numeroPedido = pedido.get("numeroPedido").getAsString();
             double total = pedido.get("total").getAsDouble();
             LocalDateTime registradoEn = LocalDateTime.parse(pedido.get("registradoEn").getAsString());
-
-            // El historial es del pedido: se lee una vez y se comparte entre sus líneas.
             List<CambioEstado> historial = new ArrayList<>();
             for (JsonElement e : pedido.getAsJsonArray("historialEstados")) {
                 JsonObject cambio = e.getAsJsonObject();
@@ -38,7 +34,6 @@ public class AppPedidosJsonAdapter extends FuenteDatos<LineaPedido> {
                         LocalDateTime.parse(cambio.get("fechaHora").getAsString())));
             }
             List<CambioEstado> historialInmutable = List.copyOf(historial);
-
             int numeroLinea = 1;
             for (JsonElement l : pedido.getAsJsonArray("lineas")) {
                 JsonObject linea = l.getAsJsonObject();

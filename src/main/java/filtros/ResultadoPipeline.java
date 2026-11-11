@@ -3,10 +3,7 @@ package filtros;
 import java.util.List;
 import modelo.LineaPedido;
 
-/** Resultado de ejecutar el Pipeline: las líneas limpias y el informe de descartes. */
 public record ResultadoPipeline(int lineasLeidas, List<LineaPedido> lineas, List<Descarte> descartes) {
-
-    /** Número de pedidos distintos que quedan (las líneas se agrupan por numeroPedido). */
     public int cantidadPedidos() {
         return (int) lineas.stream().map(LineaPedido::numeroPedido).distinct().count();
     }

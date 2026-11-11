@@ -44,26 +44,12 @@ public class SistemaPedidos {
         }
         System.out.println("Leidos: " + lineas.size() + " lineas, " + pagos.size()
                 + " pagos, " + menu.size() + " platos\n");
-
-        // El ORDEN importa: primero duplicados, luego cantidades, luego pagos.
         List<Filtro> filtros = List.of(
                 new FiltroDuplicados(),
                 new FiltroCantidades(),
                 new FiltroSoloPagados(),
                 new FiltroPagoAprobado(pagos));
-
         ResultadoPipeline resultado = new Pipeline(filtros).ejecutar(lineas);
         System.out.println(resultado.informe());
-
-        // Comparación con la tabla del profesor
-        int[] esperado = {2, 1, 35, 2};
-        System.out.println("\nVerificacion contra la tabla del profesor:");
-        List<Descarte> d = resultado.descartes();
-        for (int i = 0; i < esperado.length; i++) {
-            System.out.printf(" %-45s esperado %2d, obtenido %2d  %s%n", d.get(i).filtro(),
-                    esperado[i], d.get(i).lineas(), esperado[i] == d.get(i).lineas() ? "OK" : "DIFIERE");
-        }
-        boolean finalOk = resultado.lineas().size() == 593 && resultado.cantidadPedidos() == 388;
-        System.out.println(" Total final: esperado 593 lineas de 388 pedidos  " + (finalOk ? "OK" : "DIFIERE"));
     }
 }

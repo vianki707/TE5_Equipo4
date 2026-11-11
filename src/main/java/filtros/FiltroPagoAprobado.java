@@ -6,19 +6,9 @@ import java.util.stream.Collectors;
 import modelo.LineaPedido;
 import modelo.Pago;
 
-/**
- * Regla 3: un pedido pagado debe tener un pago APROBADO en la pasarela
- * y el monto cobrado debe ser igual al total del pedido.
- * Es una regla de PEDIDO: si el pedido no cumple, se descartan todas sus líneas.
- *
- * Un pedido puede tener varios intentos de pago (RECHAZADA y luego APROBADA),
- * por eso se agrupan por referencia y se busca si ALGUNO cumple.
- */
 public class FiltroPagoAprobado implements Filtro {
-    private static final double TOLERANCIA = 0.005;  // medio centavo: evita errores de double
-
+    private static final double TOLERANCIA = 0.005; 
     private final Map<String, List<Pago>> pagosPorPedido;
-
     public FiltroPagoAprobado(List<Pago> pagos) {
         this.pagosPorPedido = pagos.stream()
                 .collect(Collectors.groupingBy(Pago::referencia));
@@ -26,7 +16,7 @@ public class FiltroPagoAprobado implements Filtro {
 
     @Override
     public String nombre() {
-        return "Pago no aprobado o monto distinto al total";
+        return "Pago no aprobado";
     }
 
     @Override

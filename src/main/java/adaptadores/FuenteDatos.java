@@ -6,20 +6,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-/**
- * Interfaz común (Adapter) para las tres fuentes. Cada adaptador conoce su archivo
- * y su formato; el resto del programa solo llama a leer().
- */
 public abstract class FuenteDatos<T> {
     private final Path ruta;
-
     protected FuenteDatos(Path ruta) {
         this.ruta = ruta;
     }
-
-    /** Traduce el contenido del archivo (texto) a objetos del modelo. */
     protected abstract List<T> convertir(String contenido);
-
     public final List<T> leer() {
         String contenido;
         try {
