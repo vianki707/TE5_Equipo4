@@ -1,9 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package modelo;
 
 import java.time.LocalDateTime;
 
-public record Pago(String id, double monto, String estado, String metodo, String extra, LocalDateTime fechaHora) {}
+/** Un intento de pago de la pasarela. Un mismo pedido puede tener varios intentos. */
+public record Pago(
+        String referencia,        // número del pedido al que corresponde (REFERENCIA)
+        double monto,
+        String estado,            // APROBADA, RECHAZADA o SIN_RESPUESTA
+        String codAutorizacion,   // vacío si no fue aprobada
+        String motivoRechazo,     // vacío si fue aprobada
+        LocalDateTime fechaHora
+) {}

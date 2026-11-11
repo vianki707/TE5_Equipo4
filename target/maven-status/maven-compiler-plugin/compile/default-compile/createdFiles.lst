@@ -1,9 +1,0 @@
-adaptadores\PasarelaCsvAdapter.class
-modelo\Pago.class
-adaptadores\FuenteDatos.class
-modelo\LineaPedido.class
-principal\SistemaPedidos.class
-adaptadores\AppPedidosJsonAdapter.class
-adaptadores\MenuCsvAdapter.class
-fabrica\FabricaFuentes.class
-modelo\Plato.class

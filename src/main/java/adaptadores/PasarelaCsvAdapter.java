@@ -1,25 +1,36 @@
 package adaptadores;
 
+import java.nio.file.Path;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import modelo.Pago; 
+import modelo.Pago;
 
+/**
+ * Lee pagos_pasarela.csv: separado por ';', montos con coma decimal (7,50)
+ * y fechas con formato dd/MM/yyyy HH:mm:ss.
+ */
 public class PasarelaCsvAdapter extends FuenteDatos<Pago> {
-    @Override
-    protected List<Pago> convertir(String txt) {
-        DateTimeFormatter formatoFecha = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+    private static final DateTimeFormatter FORMATO_FECHA =
+            DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 
-        return txt.lines().skip(1) 
-            .map(l -> l.split(";", -1)) // <-- 1. Volvemos a separar las columnas por PUNTO Y COMA
-            .map(c -> new Pago(
-                c[0], 
-                Double.parseDouble(c[1].replace(',', '.')), // <-- 2. Cambiamos la coma por punto para los decimales (ej. 3,75 a 3.75)
-                c[2], 
-                c[3], 
-                c[4], 
-                LocalDateTime.parse(c[5], formatoFecha)
-            ))
-            .toList();
+    public PasarelaCsvAdapter(Path ruta) {
+        super(ruta);
+    }
+
+    @Override
+    protected List<Pago> convertir(String contenido) {
+        return contenido.lines()
+                .skip(1)                          // cabecera
+                .filter(l -> !l.isBlank())        // ignora líneas vacías
+                .map(l -> l.split(";", -1))       // -1 conserva las columnas vacías
+                .map(c -> new Pago(
+                        c[0].trim(),
+                        Double.parseDouble(c[1].trim().replace(',', '.')),
+                        c[2].trim(),
+                        c[3].trim(),
+                        c[4].trim(),
+                        LocalDateTime.parse(c[5].trim(), FORMATO_FECHA)))
+                .toList();
     }
 }

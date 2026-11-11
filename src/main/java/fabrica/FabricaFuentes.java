@@ -1,33 +1,34 @@
 package fabrica;
 
+import adaptadores.AppPedidosJsonAdapter;
 import adaptadores.FuenteDatos;
-import adaptadores.PasarelaCsvAdapter;
 import adaptadores.MenuCsvAdapter;
-import adaptadores.AppPedidosJsonAdapter; // <-- Importación del nuevo adaptador
+import adaptadores.PasarelaCsvAdapter;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/** Factory: elige el adaptador según el campo "tipo" de fuentes.json, sin cadenas de if. */
 public class FabricaFuentes {
     private final Map<String, Function<Path, FuenteDatos<?>>> tipos = new HashMap<>();
 
-    // Este es el ÚNICO constructor
     public FabricaFuentes() {
-        registrar("pasarela_csv", base -> new PasarelaCsvAdapter());
-        registrar("menu_csv", base -> new MenuCsvAdapter());
-        registrar("app_json", base -> new AppPedidosJsonAdapter()); // <-- Registro del JSON
+        registrar("app_json", AppPedidosJsonAdapter::new);
+        registrar("pasarela_csv", PasarelaCsvAdapter::new);
+        registrar("menu_csv", MenuCsvAdapter::new);
     }
 
+    /** Permite agregar un tipo nuevo sin tocar el resto del programa. */
     public void registrar(String tipo, Function<Path, FuenteDatos<?>> constructor) {
         tipos.put(tipo, constructor);
     }
 
-    public FuenteDatos<?> crear(String tipo, Path base) {
-        var constructor = tipos.get(tipo);
+    public FuenteDatos<?> crear(ConfigFuente config) {
+        Function<Path, FuenteDatos<?>> constructor = tipos.get(config.tipo());
         if (constructor == null) {
-            throw new IllegalArgumentException("Tipo de fuente no soportado: " + tipo);
+            throw new IllegalArgumentException("Tipo de fuente no soportado: " + config.tipo());
         }
-        return constructor.apply(base);
+        return constructor.apply(Path.of(config.ruta()));
     }
 }
