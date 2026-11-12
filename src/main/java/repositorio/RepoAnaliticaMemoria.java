@@ -19,7 +19,6 @@ public class RepoAnaliticaMemoria implements RepoAnalitica {
 
     @Override
     public List<LineaPedido> lineasEntre(LocalDate desde, LocalDate hasta) {
-        // usa registradoEn, la fecha del pedido
         return lineas.stream()
                 .filter(l -> enRango(l.registradoEn().toLocalDate(), desde, hasta))
                 .toList();
