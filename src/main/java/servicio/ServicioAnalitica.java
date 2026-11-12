@@ -16,7 +16,9 @@ import filtros.ResultadoPipeline;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import metricas.Metrica;
+import metricas.ReporteEstadisticas;
 import modelo.LineaPedido;
 import modelo.Pago;
 import modelo.Plato;
@@ -30,10 +32,16 @@ public class ServicioAnalitica {
 
     private final RepoAnalitica repo;
     private final List<Metrica> metricas;
+    private final Map<Integer, String> catalogoPlatos;
 
-    public ServicioAnalitica(RepoAnalitica repo, List<Metrica> metricas) {
+    /**
+     * @param catalogoPlatos mapa vacío que comparte con PlatosTop; cargar() lo llena con el menú
+     */
+    public ServicioAnalitica(RepoAnalitica repo, List<Metrica> metricas,
+                             Map<Integer, String> catalogoPlatos) {
         this.repo = repo;
         this.metricas = metricas;
+        this.catalogoPlatos = catalogoPlatos;
     }
 
     /** Lee las fuentes (Adapter + Factory), limpia (Pipeline) y guarda en el repositorio. */
@@ -60,6 +68,11 @@ public class ServicioAnalitica {
         System.out.println("Leidos: " + lineas.size() + " lineas, " + pagos.size()
                 + " pagos, " + menu.size() + " platos\n");
 
+        catalogoPlatos.clear();
+        for (Plato p : menu) {
+            catalogoPlatos.put(p.id(), p.nombre());
+        }
+
         List<Filtro> filtros = List.of(
                 new FiltroDuplicados(),
                 new FiltroCantidades(),
@@ -72,12 +85,10 @@ public class ServicioAnalitica {
         repo.guardarPagos(pagos);
     }
 
+    /** Consulta el repositorio por rango de fechas y calcula las métricas. */
     public void resumen(LocalDate desde, LocalDate hasta) {
         List<LineaPedido> lineas = repo.lineasEntre(desde, hasta);
-        System.out.println("=== Resumen del " + desde + " al " + hasta + " ===");
-        for (Metrica m : metricas) {
-            System.out.println("--- " + m.nombre() + " ---");
-            System.out.println(m.calcular(lineas));
-        }
+        System.out.println(" Resumen del " + desde + " al " + hasta + " . ");
+        new ReporteEstadisticas(metricas).generarReporte(lineas);
     }
 }
